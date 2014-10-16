@@ -1,0 +1,114 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function bid_block_info() {
+  $blocks = array();
+
+  $blocks['bid'] = array(
+    'info' => t('Bid form'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function bid_block_view($delta = '') {
+  global $user;
+  $block = array();
+  $cargas_node = node_load(arg(1));
+  if (isset($cargas_node->nid)) {
+    // Check if user already submitted a bid.
+    $my_bid_view = views_get_view_result('cargas_my_bid', 'default', $user->uid, $cargas_node->nid);
+    if (count($my_bid_view)) {
+      $current_bid_node = node_load($my_bid_view[0]->nid);
+      if (isset($_GET['op']) && $_GET['op'] == 'edit') {
+        module_load_include('inc', 'node', 'node.pages');
+        $_GET['destination'] = 'node/'.$cargas_node->nid;
+        $block['subject'] = 'Editar oferta';
+        $block['content']['form'] = drupal_get_form('bid_node_form', $current_bid_node);
+      } else {
+        $block['subject'] = 'Tu oferta';
+        $block['content']['view'] = array('#markup' => views_embed_view('cargas_my_bid', 'default', $user->uid, $cargas_node->nid));
+        $block['content']['form'] = drupal_get_form('bid_current_options_form', $current_bid_node);
+      }
+    } else {
+      $_GET['destination'] = 'node/'.$cargas_node->nid;  
+      //dpm($my_bid_view);
+      module_load_include('inc', 'node', 'node.pages');
+      $title = drupal_get_title();
+      $_GET['field_carga'] = arg(1);
+
+      
+      $form = node_add('bid');
+
+      // Restore title, which will have been overridden.
+      drupal_set_title($title, PASS_THROUGH);
+      $block['subject'] = null;
+      $block['content']['form'] = $form;
+    }
+  } else {
+    $block['subject'] = 'Tu oferta';
+    $block['content']['view'] = array('#markup' => 'This block is only visible in node view.');
+  }
+  return $block;
+}
+
+function bid_current_options_form($form, &$form_state, $bid_node) {
+  if (isset($form_state['values']['op']) && $form_state['values']['op'] == 'Retirar oferta') {
+    return bid_cancel_form_confirm($form_state);
+  }
+  //dpm($bid_node);
+  $form['nid'] = array(
+    '#type' => 'value',
+    '#value' => $bid_node->nid,
+  );
+  
+  $form['edit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Editar oferta'
+  );
+  $form['cancel'] = array(
+    '#type' => 'submit',
+    '#value' => 'Retirar oferta'
+  );
+  //dpm($form_state);
+  return $form;
+}
+
+
+function bid_current_options_form_submit($form, &$form_state) {
+  //drupal_set_message(print_r($form_state, 1));
+  if ($form_state['values']['op'] == 'Editar oferta') {
+    //drupal_set_message('yes!');
+    //$_GET['destination'] = '';
+    drupal_goto($_GET['q'], array('query' => array('op' => 'edit')));
+    exit();
+  } elseif ($form_state['values']['op'] == 'Retirar oferta') {
+    $form_state['rebuild'] = TRUE;
+  } elseif (isset($form_state['values']['confirm'])) {
+    node_delete($form_state['values']['nid']);
+  }
+}
+
+
+function bid_cancel_form_confirm(&$form_state) {
+  //dpm($form_state);
+  $form['nid'] = array(
+    '#type' => 'value',
+    '#value' => $form_state['values']['nid'],
+  );
+  //$form['destination'] = array('#type' => 'hidden', '#value' => 'example/todo');
+  $desc = '<p>Esta oferta ser&aacute; borrada. Desea continuar?</p>';
+  return confirm_form($form,
+                      'Are you sure?',
+                      null,
+                      $desc,
+                      'Continue',
+                      'Cancel');
+}

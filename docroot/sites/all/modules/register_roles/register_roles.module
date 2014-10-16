@@ -1,0 +1,112 @@
+<?php
+// Author: @Eduardo Gonzalez
+// Contact: eduardogonrod@gmail.com
+// $Id: role_rules.module, v 1.0 2011/08/24 09:17:35 egr # more info: eduardogonrod@gmail.com
+
+/**
+ * Implements hook_help().
+ */
+function register_roles_help($path, $arg) {
+  switch ($path) {
+    case "admin/help#role_rules":
+      return '<p>'.  t("Allow users to select a specific role in the registration form.") .'</p>';
+      break;
+  }
+}
+
+function register_roles_menu() {
+	$items = array();
+	$items['admin/config/people/register_roles'] = array(
+    'title' => 'Roles in register form',
+    'description' => 'Manage roles to display in register form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('register_roles_form'),
+    'access arguments' => array('roles register form'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+} 
+
+/**
+ * Implements hook_permission().
+ */
+function register_roles_permission(){
+  return array(
+    'roles register form' => array(
+      'title' => t('Access to Roles in register form'),
+    ),  
+    
+  );  
+} 
+
+/**
+ * Implements hook_user_register_form_alter().
+ * Description: Display the field Apply for role in register form  
+ */
+function register_roles_form_user_register_form_alter(&$form, &$form_state, $form_id) {
+  $result = db_select('role', 'p')
+    ->fields('p')
+    ->execute();
+  $troles = array();
+  while ($role = $result->fetchAssoc()) {
+    $troles[$role['rid']] = $role['name']; 
+  }
+  $filter_roles = variable_get('register_roles_to_apply', array());
+  $roles_to_apply = array();
+  foreach($filter_roles as $roles) {
+    if (isset($troles[$roles]))
+    $roles_to_apply[$roles] = $troles[$roles];
+  }   
+      
+      $form['rid'] = array(
+        '#type' => 'select',
+        '#title' =>  t('Select a role'),
+        '#options' => $roles_to_apply,
+        '#weight' => variable_get('register_roles_weight', 0),
+        '#required' => TRUE,
+      );
+    }
+    
+/**
+ * Implements hook_user_insert().
+ * Description: Auto-assign of the role selected  
+ */
+function register_roles_user_insert(&$edit, $account, $category) {
+  if (!empty($edit['rid'])) {
+    $role_insert = db_insert('users_roles') 
+      ->fields(array(
+        'rid' => $edit['rid'],
+        'uid' => $account->uid,
+        ))
+      ->execute();
+  } 
+}
+
+/**
+ * Callback for the role_rules Register form.
+ */
+ function register_roles_form($form, &$form_state) {
+  $result = db_select('role', 'p')
+    ->fields('p')
+    ->execute();
+  $troles = array();
+  while ($role = $result->fetchAssoc()) {
+    $troles[$role['rid']] = $role['name']; 
+  }
+  $form['register_roles_to_apply'] = array
+  (
+    '#type' => 'checkboxes',
+    '#title' => t('Select a role:'),
+    '#description' => t('Roles to be displayed in the register form'),
+    '#options' => $troles,
+    '#default_value' => variable_get('register_roles_to_apply', array())
+  );
+  $form['register_roles_weight'] = array(
+    '#type' => 'weight',
+    '#title' => t('Weight to display field:'),
+    '#default_value' => variable_get('register_roles_weight', 0),
+  );
+  return system_settings_form($form);
+  
+}
+

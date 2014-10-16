@@ -1,0 +1,10 @@
+; Author: @Eduardo Gonzalez
+; Contact: eduardogonrod@gmail.com
+; $Id: role_rules.info, v 1.0 2011/08/24 11:07:12 egr 
+name = Register Roles
+description = Allow users to select a specific role in the registration form.
+package = User management
+core = 7.x
+php = 5.2
+files[] = register_roles.module
+version = 7.x-1.0-release0

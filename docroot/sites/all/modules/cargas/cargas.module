@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Cargas feature.
+ */
+
+include_once 'cargas.features.inc';

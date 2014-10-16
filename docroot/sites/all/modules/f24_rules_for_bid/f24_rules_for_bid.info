@@ -1,0 +1,14 @@
+name = F24 rules for bid
+description = Rules only
+core = 7.x
+package = F24
+version = 7.x-1.0
+project = f24_rules_for_bid
+dependencies[] = entity
+dependencies[] = rules
+dependencies[] = rules_scheduler
+features[features_api][] = api:2
+features[rules_config][] = rules_link_condition_bid_award
+features[rules_config][] = rules_link_set_bid_award
+features[rules_config][] = rules_schedule_carga_expiration_action
+features[rules_config][] = rules_schedule_set_carga_expiration

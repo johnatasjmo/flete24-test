@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the F24 Cargas Bids Views feature.
+ */
+
+include_once 'f24_cargas_bids_views.features.inc';

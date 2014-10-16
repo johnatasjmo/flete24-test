@@ -1,0 +1,126 @@
+/***Menu bar****/
+@media (max-width: 768px) {
+ ul.secondary {
+  float: none;
+}
+}
+.ace-nav > li {
+   height: 50px;
+   }
+.menu.nav.navbar-nav li:hover {
+	background: green;
+	}
+.iniciar-sesion >a {
+	background-color: #ffb653;
+}
+.registrate {
+	background-color: #d05b49;
+}	
+
+/**************video container responsive here*/
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; 
+    height: 0; 
+    overflow: hidden;
+    margin-top: 5%;
+}
+.video-container iframe,
+.video-container object,
+.video-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+video, video.scale-with-grid {
+    height: auto;
+    max-width: 100%;
+    outline-color: -moz-use-text-color;
+    outline-style: none;
+    outline-width: 0;
+}
+
+
+/************Huge button at frontpage*/
+.btn-huge{
+    padding-top:20px;
+    padding-bottom:20px;
+    width:75%;
+    font-size: 30px; 
+}
+.btn.btn-success.btn-huge.btn-f24 {
+	font-size: 30px;
+}
+
+/****************fixing nodes max width on forms*/
+.node-cargas-form {
+	max-width: 510px;
+}
+.node-camiones-form {
+	max-width: 510px;
+}
+
+/**********login and register buttons on navigation bar*/
+.top-bar-login {
+	display: inline;
+	float: right;
+	margin-left:	10px;
+	margin-right:	20px;
+	margin-top:	5px;
+}
+.top-bar-register {
+	display: inline;
+	float: right;
+	margin-top:	5px;
+}
+/**************** Menu icons*********************/
+.menu-mis-camiones {background: #4b4b4b; border-right: #fff;}
+.menu-mis-cargas {background: #4b4b4b; border-right: #fff;}
+.mensajes {background: #4b4b4b; border-right: #fff;}
+.menu-my-account {background: #4b4b4b; border-right: #fff; /*height: 50px;*/}
+.menu-log-out {background: #4b4b4b; border-right: #fff; /*height: 50px;*/}
+.menu-publicar-camion {background: #4b4b4b; border-right: #fff;}
+.menu-publicar-carga {background: #4b4b4b; border-right: #fff;}
+
+///*****colores: #762c59, #2c7659 ***///
+
+
+/*****hide tab bar on forms**review why it happens*******/
+.vertical-tabs-panes.vertical-tabs-processed.tab-content {
+    visibility: hidden
+}
+
+
+/***** User Menu ******/
+.navbar-nav.secondary li a i{
+font-size:20px;
+}
+.navbar-nav.secondary li a i.glyphicon{
+font-size:18px;
+}
+
+.navbar-nav.secondary .menu-my-account a {
+padding-top:10px;
+padding-bottom:10px;
+}
+
+
+@media (min-width: 768px  ) {
+  .navbar-nav.secondary li.leaf:not(:last-child) {
+    border-right:1px solid #fff;
+  }
+
+  .navbar-nav>li>a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    height: 53px;
+  }
+}
+
+/****jmo test*****///
+.menu.nav.navbar-nav.secondary {
+    margin-right: -12px;
+}

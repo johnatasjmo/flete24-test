@@ -1,0 +1,11 @@
+name = F24 Cargas Bids Views
+description = View for Cargas Bids
+core = 7.x
+package = F24
+version = 7.x-1.0
+project = f24_cargas_bids_views
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = cargas_bids
+features_exclude[dependencies][ctools] = ctools

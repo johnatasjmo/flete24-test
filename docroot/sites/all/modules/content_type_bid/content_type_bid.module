@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content Type Bid feature.
+ */
+
+include_once 'content_type_bid.features.inc';
