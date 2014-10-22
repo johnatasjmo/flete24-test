@@ -411,7 +411,7 @@ function rules_link_form_submit(&$form, &$form_state) {
 /**
  * Form function for the rules link components.
  */
-function rules_link_component_form($form, $form_state, $entity_type, $rules_link) {
+function rules_link_component_form($form, &$form_state, $entity_type, $rules_link) {
   $form = array();
   $form_state['rules_link'] = $rules_link;
 
@@ -428,9 +428,15 @@ function rules_link_component_form($form, $form_state, $entity_type, $rules_link
   unset($form['condition_set']['negate']);
   $form['condition_set']['#tree'] = TRUE;
 
-
   $rule_set = rules_link_load_rules_set($rules_link);
   $rule_set->form($form['rule_set'], $form_state, array('show settings' => TRUE));
+
+  // Correct the state setup - default ruleset form doesn't expect this structure
+  $form['rule_set']['settings']['access']['permissions']['#states'] = array(
+    'visible' => array(
+      ':input[name="rule_set[settings][access][access_exposed]"]' => array('checked' => TRUE),
+    ),
+  );
 
   $form['rule_set']['elements']['#caption'] = '';
   $form['rule_set']['#tree'] = TRUE;
@@ -490,6 +496,14 @@ function rules_link_component_form_submit(&$form, &$form_state) {
   if ($form_state['rules_link_rules_set']->name != rules_link_get_rules_set_name($form_state['rules_link'])) {
     $form_state['rules_link_rules_set']->label = 'Rules link: ' . $form_state['rules_link']->label . ' rules set';
     $form_state['rules_link_rules_set']->save(rules_link_get_rules_set_name($form_state['rules_link']), 'rules_link');
+  }
+
+  // Save the permission matrix if access is exposed
+  if (isset($form_state['values']['rule_set']['settings']['access']) && !empty($form_state['values']['rule_set']['settings']['access']['access_exposed'])) {
+    // Save the permission matrix.
+    foreach ($form_state['values']['rule_set']['settings']['access']['permissions']['matrix']['checkboxes'] as $rid => $value) {
+      user_role_change_permissions($rid, $value);
+    }
   }
 
   // If an additional variable was added, then disable 'show link in entity'.
